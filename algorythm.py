@@ -1,6 +1,8 @@
 # receives board
 # returns move
 
+from utility_score import UtilityScore
+
 class Algorythm():
     triplets = [
         [0, 1, 2],
@@ -26,13 +28,11 @@ class Algorythm():
         if isEmpty:
             return 0
 
-        if self.IsWon(board):
+        if UtilityScore().game_is_won(board):
             return None
 
-        # for triplet in triplets:
         available_options = []
-        best_option = None
-        best_utility_score = 0.0
+        moves_with_utility_scores = []
 
         for triplet in self.triplets:
             for i in range(3):
@@ -44,42 +44,11 @@ class Algorythm():
             trial_board = []
             trial_board.extend(board)
             trial_board[option] = 'x'
-        
-            if self.IsWon(trial_board):
-                return option
-            
-            # know about related triplets
-            # checking for high utility
-            related = self.GetRelatedTriplets(option)
-            score = 0.0
-            for relation in related:
-                score = self.GetUtilityScore(board, relation)
 
-            if score > best_utility_score:
-                best_utility_score = score
-                best_option = option
+            score = UtilityScore().get_score(trial_board)
+            moves_with_utility_scores.append({ 'position': option, 'score': score })
 
-        return best_option
-
-    def GetRelatedTriplets(self,square):
-        related = []
-        for triplet in self.triplets:
-            if square in triplet:
-                related.append(triplet)
-        return related
-
-    def IsWon(self, board):
-        for triplet in self.triplets:
-            if board[triplet[0]] and board[triplet[0]] == board[triplet[1]] == board[triplet[2]]:
-                return True
-        return False
-
-    def GetUtilityScore(self, board, relation):
-        score = 0.0
-        if board[relation[0]] is None and board[relation[1]] == 'o' and board[relation[1]] == board[relation[2]]:
-            score = score + 0.2
-        if board[relation[1]] is None and board[relation[2]] == 'o' and  board[relation[0]] == board[relation[2]]:
-            score = score + 0.2
-        if board[relation[2]] is None and board[relation[0]] == 'o' and  board[relation[0]] == board[relation[1]]:
-            score = score + 0.2
-        return score
+        for potential_move in moves_with_utility_scores:
+            if potential_move['score'] == 1.0:
+                return potential_move['position']
+                

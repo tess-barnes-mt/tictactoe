@@ -54,7 +54,7 @@ class TestTicTacToe(unittest.TestCase):
         tictac = algorythm.Algorythm()
         self.assertEqual(tictac.GetMove(self.board), 6)
 
-    def test_plays_second_move(self):
+    def test_plays_a_defensive_move(self):
         self.board = [None, 'o', 'x',None,'o']+[None]*4
         tictac = algorythm.Algorythm()
         self.assertEqual(tictac.GetMove(self.board), 7)
